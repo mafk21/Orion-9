@@ -31,3 +31,8 @@ export const ORION_BRAND = {
   tagline: 'Deep Space Rescue Investigation System',
   callsign: 'Rescue Operations'
 };
+
+export const SEED_OPERATOR = {
+  email: 'operator@orion9.space',
+  password: 'orion9'
+};

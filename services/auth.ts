@@ -16,16 +16,6 @@ export async function signUpWithEmail(email: string, password: string, callsign?
   return result;
 }
 
-export async function resetPassword(email: string) {
-  return supabase.auth.resetPasswordForEmail(email, {
-    redirectTo: `${typeof window !== 'undefined' ? window.location.origin : ''}/auth?reset=true`
-  });
-}
-
-export async function updatePassword(newPassword: string) {
-  return supabase.auth.updateUser({ password: newPassword });
-}
-
 export async function signOut() {
   return supabase.auth.signOut();
 }
