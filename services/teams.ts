@@ -202,3 +202,14 @@ export async function fetchTeamMemberCount(teamId: string): Promise<number> {
   if (error) throw error;
   return count ?? 0;
 }
+// Aliases for profile page
+export async function getTeamByUser(userId: string) {
+  const membership = await fetchMembership(userId);
+  if (!membership) return null;
+  return fetchTeam(membership.team.id);
+}
+
+export async function getTeamMembers(teamId: string) {
+  const result = await fetchTeamWithMembers(teamId);
+  return result?.members ?? [];
+}

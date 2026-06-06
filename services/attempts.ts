@@ -20,3 +20,8 @@ export async function fetchAttemptsForTeam(teamId: string) {
   if (error) throw error;
   return (data ?? []) as AttemptRow[];
 }
+
+// Alias for profile page
+export async function getAttemptsByTeam(teamId: string) {
+  return fetchAttemptsForTeam(teamId);
+}
