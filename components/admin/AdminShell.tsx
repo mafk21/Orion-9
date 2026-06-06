@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import AdminUsersTab from './AdminUsersTab';
 import AdminMissionsTab from './AdminMissionsTab';
 import AdminTeamsTab from './AdminTeamsTab';
 import AdminSoloTab from './AdminSoloTab';
@@ -9,11 +10,11 @@ import AdminSystemTab from './AdminSystemTab';
 import AdminGameConfigTab from './AdminGameConfigTab';
 import HudFrame from '@/components/ui/HudFrame';
 
-const TABS = ['missions', 'teams', 'solo', 'signals', 'system', 'config'] as const;
+const TABS = ['users', 'missions', 'teams', 'solo', 'signals', 'system', 'config'] as const;
 type Tab = typeof TABS[number];
 
 export default function AdminShell() {
-  const [tab, setTab] = useState<Tab>('missions');
+  const [tab, setTab] = useState<Tab>('users');
   return (
     <div className="space-y-6">
       <HudFrame tone="amber">
@@ -36,6 +37,7 @@ export default function AdminShell() {
         ))}
       </div>
       <div>
+        {tab === 'users' ? <AdminUsersTab /> : null}
         {tab === 'missions' ? <AdminMissionsTab /> : null}
         {tab === 'teams' ? <AdminTeamsTab /> : null}
         {tab === 'solo' ? <AdminSoloTab /> : null}

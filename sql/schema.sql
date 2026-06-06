@@ -4,8 +4,8 @@
 -- ----------------------------------------------------------------------------
 -- Run order:
 --   1. Apply this file in the Supabase SQL editor (or via supabase db push)
---   2. Sign up the seed user `operator@orion9.space / orion9` via Supabase Auth
---   3. Re-run the SEED block at the bottom (idempotent) to elevate clearance
+--   2. Create admin account via Admin Setup (email: mbm143105@gmail.com)
+--   3. Grant OMEGA clearance to admin account using the SQL at bottom of file
 -- ============================================================================
 
 -- ----------------------------------------------------------------------------
@@ -352,39 +352,7 @@ drop policy if exists "admin_actions_omega" on public.admin_actions;
 create policy "admin_actions_omega" on public.admin_actions for all using (public.is_omega()) with check (public.is_omega());
 
 -- ----------------------------------------------------------------------------
--- 6. Game-rule integrity
--- ----------------------------------------------------------------------------
-
--- Lock a team after first mission entry; fail at 3 attempts ---------
-create or replace function public.handle_attempt_after_insert()
-returns trigger
-language plpgsql security definer
-as $$
-declare
-  failed_count smallint;
-begin
-  -- Locked on first attempt of phase 1 (first mission entry)
-  update public.teams set locked = true where id = new.team_id and locked = false;
-
-  if new.success = false then
-    select count(*) into failed_count from public.attempts where team_id = new.team_id and success = false;
-    update public.teams
-       set attempt_count = least(failed_count, 3),
-           status = case when failed_count >= 3 then 'failed'::orion_team_status else status end
-     where id = new.team_id;
-  end if;
-
-  return new;
-end;
-$$;
-
-drop trigger if exists attempts_after_insert on public.attempts;
-create trigger attempts_after_insert
-  after insert on public.attempts
-  for each row execute function public.handle_attempt_after_insert();
-
--- ----------------------------------------------------------------------------
--- 7. Seed data (idempotent)
+-- 6. Seed data (idempotent)
 -- ----------------------------------------------------------------------------
 
 -- Solo challenges (phase-aware indirect clues) ----------------------
@@ -403,8 +371,8 @@ where not exists (select 1 from public.system_logs where content like 'ORION-9 l
 
 -- Elevate the seed operator to OMEGA (after they sign up) ----------
 update public.profiles
-   set clearance_level = 'OMEGA', callsign = coalesce(callsign, 'OPERATOR-PRIME')
- where email = 'operator@orion9.space';
+   set clearance_level = 'OMEGA', callsign = coalesce(callsign, 'OMEGA-ADMIN')
+ where email = 'mbm143105@gmail.com';
 
 -- ============================================================================
 -- END
