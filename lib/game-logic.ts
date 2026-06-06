@@ -53,7 +53,7 @@ export interface MasterCodeFragments {
  */
 export const MASTER_CODE_PATTERN = /^[A-Z]\d{2}-[A-Z]\d{2}-\d{2}-\d{2}$/;
 
-// Master code is now stored in game_config.endgame_master_code table
+export const MASTER_CODE_EXPECTED = 'UNSET';  // Deprecated; use game_config.endgame_master_code
 
 export function buildMasterCode(fragments: MasterCodeFragments): string | null {
   const order = fragments.captainOrder ?? ['engineer', 'analyst', 'hacker'];

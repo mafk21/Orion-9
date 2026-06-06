@@ -103,19 +103,16 @@ export default function AdminGameConfigTab() {
     if (!user) return;
     setIsBusy(true);
     try {
-      const { updateEndgameOption } = await import('@/services/gameConfig');
-      // First, set all options to incorrect
-      for (const opt of options) {
-        if (opt.is_correct) {
-          await updateEndgameOption(opt.id, { is_correct: false });
-        }
-      }
-      // Then set the selected option as correct
       const updated = options.map((o) =>
-        o.id === id ? { ...o, is_correct: true } : { ...o, is_correct: false }
+        o.id === id ? { ...o, is_correct: !current } : { ...o, is_correct: false }
       );
       setOptions(updated);
-      await updateEndgameOption(id, { is_correct: true });
+      // Update all in sequence
+      for (const opt of updated) {
+        if (opt.is_correct || opt.is_correct !== options.find((o) => o.id === opt.id)?.is_correct) {
+          await createEndgameOption({ label: opt.label, is_correct: opt.is_correct, position: opt.position });
+        }
+      }
       await logAdminAction({
         admin_id: user.id,
         action: 'endgame_option.toggle',
